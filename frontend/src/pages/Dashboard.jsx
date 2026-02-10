@@ -20,7 +20,7 @@ export default function Dashboard() {
   async function loadDashboard() {
 
     const res = await fetch(
-      "http://localhost:8000/dashboard/summary",
+      "https://supplier-across-future-bonds.trycloudflare.com/dashboard/summary",
       {
         headers: {
           Authorization: `Bearer ${token}`,
