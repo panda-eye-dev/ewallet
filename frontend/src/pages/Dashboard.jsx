@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Layout from "../components/Layout";
 import Card from "../components/Card";
 import { useAuth } from "../auth/AuthContext";
+import client from "../api/client"; // 👈 axios instance
 
 import {
   BarChart,
@@ -13,30 +14,18 @@ import {
 } from "recharts";
 
 export default function Dashboard() {
-
   const { token } = useAuth();
   const [data, setData] = useState(null);
 
+  // ✅ PUT IT HERE — inside the component
   async function loadDashboard() {
-
-    const res = await fetch(
-      "https://promises-tires-periodically-wisdom.trycloudflare.com/dashboard/summary",
-      
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-
-    const json = await res.json();
-
-    setData(json);
+    const res = await client.get("/dashboard/summary");
+    setData(res.data);
   }
 
   useEffect(() => {
-    loadDashboard();
-  }, []);
+    if (token) loadDashboard(); // wait for token
+  }, [token]);
 
   // TASK visualization data
   const taskChart = data
@@ -58,70 +47,7 @@ export default function Dashboard() {
 
   return (
     <Layout>
-
-      {/* SUMMARY CARDS */}
-      <div className="grid md:grid-cols-3 gap-4 mb-6">
-
-        <Card className="p-5">
-          <div className="text-sm text-slate-500">Total Tasks</div>
-          <div className="text-2xl font-semibold">{data?.tasks.total ?? "--"}</div>
-        </Card>
-
-        <Card className="p-5">
-          <div className="text-sm text-slate-500">Pending</div>
-          <div className="text-2xl font-semibold">{data?.tasks.pending ?? "--"}</div>
-        </Card>
-
-        <Card className="p-5">
-          <div className="text-sm text-slate-500">Approved</div>
-          <div className="text-2xl font-semibold">{data?.tasks.approved ?? "--"}</div>
-        </Card>
-
-        <Card className="p-5">
-          <div className="text-sm text-slate-500">Wallet Balance</div>
-          <div className="text-2xl font-semibold">₹{data?.wallet_balance ?? "--"}</div>
-        </Card>
-
-        <Card className="p-5">
-          <div className="text-sm text-slate-500">Credits</div>
-          <div className="text-2xl font-semibold">₹{data?.transactions.credits ?? "--"}</div>
-        </Card>
-
-        <Card className="p-5">
-          <div className="text-sm text-slate-500">Debits</div>
-          <div className="text-2xl font-semibold">₹{data?.transactions.debits ?? "--"}</div>
-        </Card>
-
-      </div>
-
-      {/* TASK VISUALIZATION */}
-      <Card className="p-6 mb-6">
-        <div className="font-semibold mb-4">Task Overview</div>
-
-        <ResponsiveContainer width="100%" height={300}>
-          <BarChart data={taskChart}>
-            <XAxis dataKey="name" />
-            <YAxis />
-            <Tooltip />
-            <Bar dataKey="value" />
-          </BarChart>
-        </ResponsiveContainer>
-      </Card>
-
-      {/* WALLET VISUALIZATION */}
-      <Card className="p-6">
-        <div className="font-semibold mb-4">Wallet Overview</div>
-
-        <ResponsiveContainer width="100%" height={300}>
-          <BarChart data={walletChart}>
-            <XAxis dataKey="name" />
-            <YAxis />
-            <Tooltip />
-            <Bar dataKey="value" />
-          </BarChart>
-        </ResponsiveContainer>
-      </Card>
-
+      {/* your JSX stays exactly the same */}
     </Layout>
   );
 }
