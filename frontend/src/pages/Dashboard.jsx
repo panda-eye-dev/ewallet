@@ -15,7 +15,6 @@ import {
 export default function Dashboard() {
 
   const { token } = useAuth();
-
   const [data, setData] = useState(null);
 
   async function loadDashboard() {
@@ -38,12 +37,21 @@ export default function Dashboard() {
     loadDashboard();
   }, []);
 
-  // Convert API data → chart format
-  const chartData = data
+  // TASK visualization data
+  const taskChart = data
     ? [
+        { name: "Total", value: data.tasks.total },
         { name: "Pending", value: data.tasks.pending },
-        { name: "Completed", value: data.tasks.completed },
         { name: "Approved", value: data.tasks.approved },
+      ]
+    : [];
+
+  // WALLET visualization data
+  const walletChart = data
+    ? [
+        { name: "Balance", value: data.wallet_balance },
+        { name: "Credits", value: data.transactions.credits },
+        { name: "Debits", value: data.transactions.debits },
       ]
     : [];
 
@@ -85,22 +93,32 @@ export default function Dashboard() {
 
       </div>
 
-      {/* DATA VISUALIZATION */}
-      <Card className="p-6">
-
-        <div className="font-semibold mb-4">
-          Task Status Visualization
-        </div>
+      {/* TASK VISUALIZATION */}
+      <Card className="p-6 mb-6">
+        <div className="font-semibold mb-4">Task Overview</div>
 
         <ResponsiveContainer width="100%" height={300}>
-          <BarChart data={chartData}>
+          <BarChart data={taskChart}>
             <XAxis dataKey="name" />
             <YAxis />
             <Tooltip />
             <Bar dataKey="value" />
           </BarChart>
         </ResponsiveContainer>
+      </Card>
 
+      {/* WALLET VISUALIZATION */}
+      <Card className="p-6">
+        <div className="font-semibold mb-4">Wallet Overview</div>
+
+        <ResponsiveContainer width="100%" height={300}>
+          <BarChart data={walletChart}>
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Tooltip />
+            <Bar dataKey="value" />
+          </BarChart>
+        </ResponsiveContainer>
       </Card>
 
     </Layout>
