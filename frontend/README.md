@@ -79,12 +79,8 @@ npm run build
 ## Deployment
 
 Frontend deployed using:
-
 - Vercel
-
-Live URL:
-https://ewallet-6s1kwz4br-lily37491s-projects.vercel.app/login
-
+  
 ---
 
 ## How to Test
