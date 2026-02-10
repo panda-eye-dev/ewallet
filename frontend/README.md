@@ -83,8 +83,7 @@ Frontend deployed using:
 - Vercel
 
 Live URL:
-https://ewallet-rust.vercel.app/login
-
+https://ewallet-6s1kwz4br-lily37491s-projects.vercel.app/login
 
 ---
 
