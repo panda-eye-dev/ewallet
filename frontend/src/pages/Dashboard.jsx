@@ -1,47 +1,56 @@
-import { useEffect, useState } from "react";
-import Layout from "../components/Layout";
-import Card from "../components/Card";
-import { useAuth } from "../auth/AuthContext";
-import client from "../api/client"; // 👈 axios instance
+import React from "react";
+import { Routes, Route, Navigate } from "react-router-dom";
+import Navbar from "./components/Navbar";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import ParentDashboard from "./pages/ParentDashboard";
+import ChildDashboard from "./pages/ChildDashboard";
+import ProtectedRoute from "./auth/ProtectedRoute";
+import { useAuth } from "./auth/AuthContext";
 
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-} from "recharts";
-
-export default function Dashboard() {
-
-  const { token } = useAuth();
-  const [data, setData] = useState(null);
-
-  async function loadDashboard() {
-    try {
-      const res = await client.get("/dashboard/summary");
-      setData(res.data);
-    } catch (err) {
-      console.error("Dashboard failed", err);
-    }
-  }
-
-  useEffect(() => {
-    if (token) loadDashboard();
-  }, [token]);
-
-  if (!data) {
-    return (
-      <Layout>
-        <div className="p-6">Loading dashboard...</div>
-      </Layout>
-    );
-  }
+export default function App() {
+  const { userRole } = useAuth();
 
   return (
-    <Layout>
-      <div>Dashboard loaded successfully</div>
-    </Layout>
+    <div className="container">
+      <Navbar />
+
+      <Routes>
+        <Route path="/" element={<Navigate to="/login" replace />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+
+        <Route
+          path="/parent"
+          element={
+            <ProtectedRoute>
+              <ParentDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/child"
+          element={
+            <ProtectedRoute>
+              <ChildDashboard />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* After login we’ll redirect based on role */}
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              {userRole === "parent" ? (
+                <Navigate to="/parent" replace />
+              ) : (
+                <Navigate to="/child" replace />
+              )}
+            </ProtectedRoute>
+          }
+        />
+      </Routes>
+    </div>
   );
 }
