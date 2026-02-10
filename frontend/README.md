@@ -28,8 +28,9 @@ EarnIt frontend is a React application providing UI for:
 
 ### Full CRUD UI
 
-Users can:
+Users (Parent) can:
 
+- Create child account **(Parents must remember and store the child_id generated when creating child account. Otherwise, parent won't be able to create tasks)**
 - Create tasks
 - View tasks
 - Update tasks
@@ -57,16 +58,6 @@ Wallet page shows currency conversion using external API via backend.
 
 ---
 
-## Environment Variables
-
-Create `.env` file:
-VITE_API_BASE_URL=https://YOUR_BACKEND_URL
-
-Example:
-VITE_API_BASE_URL=https://promises-tires-periodically-wisdom.trycloudflare.com
-
----
-
 ## Local Setup
 
 Install dependencies:
@@ -78,10 +69,6 @@ npm run dev
 
 ---
 
-## Build Production
-
-
----
 
 ## Build Production
 
@@ -112,12 +99,15 @@ https://ewallet-rust.vercel.app/login
 ---
 
 ### CRUD Flow
-
-1. Create new task
-2. Edit task
-3. Complete task
-4. Approve task
-5. Delete task
+1. Create child account
+2. Top up wallet
+3. Create new task 
+4. Edit task
+5. Child login with email and password
+6. Child complete task
+7. Parent login
+8. Parent approve task
+9. Delete task
 
 ---
 
@@ -133,12 +123,5 @@ Displays live visualization charts.
 ### Third-party API
 
 Wallet page → view currency conversion.
-
----
-
-## Notes
-
-- API URL configured via environment variable.
-- Requires backend to be running.
 
 
