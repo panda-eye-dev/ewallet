@@ -1,56 +1,108 @@
-import React from "react";
-import { Routes, Route, Navigate } from "react-router-dom";
-import Navbar from "./components/Navbar";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import ParentDashboard from "./pages/ParentDashboard";
-import ChildDashboard from "./pages/ChildDashboard";
-import ProtectedRoute from "./auth/ProtectedRoute";
-import { useAuth } from "./auth/AuthContext";
+import { useEffect, useState } from "react";
+import Layout from "../components/Layout";
+import Card from "../components/Card";
+import { useAuth } from "../auth/AuthContext";
 
-export default function App() {
-  const { userRole } = useAuth();
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
+
+export default function Dashboard() {
+
+  const { token } = useAuth();
+
+  const [data, setData] = useState(null);
+
+  async function loadDashboard() {
+
+    const res = await fetch(
+      "https://ewallet-1-wrou.onrender.com/dashboard/summary",
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    const json = await res.json();
+
+    setData(json);
+  }
+
+  useEffect(() => {
+    loadDashboard();
+  }, []);
+
+  // Convert API data → chart format
+  const chartData = data
+    ? [
+        { name: "Pending", value: data.tasks.pending },
+        { name: "Completed", value: data.tasks.completed },
+        { name: "Approved", value: data.tasks.approved },
+      ]
+    : [];
 
   return (
-    <div className="container">
-      <Navbar />
+    <Layout>
 
-      <Routes>
-        <Route path="/" element={<Navigate to="/login" replace />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+      {/* SUMMARY CARDS */}
+      <div className="grid md:grid-cols-3 gap-4 mb-6">
 
-        <Route
-          path="/parent"
-          element={
-            <ProtectedRoute>
-              <ParentDashboard />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/child"
-          element={
-            <ProtectedRoute>
-              <ChildDashboard />
-            </ProtectedRoute>
-          }
-        />
+        <Card className="p-5">
+          <div className="text-sm text-slate-500">Total Tasks</div>
+          <div className="text-2xl font-semibold">{data?.tasks.total ?? "--"}</div>
+        </Card>
 
-        {/* After login we’ll redirect based on role */}
-        <Route
-          path="/dashboard"
-          element={
-            <ProtectedRoute>
-              {userRole === "parent" ? (
-                <Navigate to="/parent" replace />
-              ) : (
-                <Navigate to="/child" replace />
-              )}
-            </ProtectedRoute>
-          }
-        />
-      </Routes>
-    </div>
+        <Card className="p-5">
+          <div className="text-sm text-slate-500">Pending</div>
+          <div className="text-2xl font-semibold">{data?.tasks.pending ?? "--"}</div>
+        </Card>
+
+        <Card className="p-5">
+          <div className="text-sm text-slate-500">Approved</div>
+          <div className="text-2xl font-semibold">{data?.tasks.approved ?? "--"}</div>
+        </Card>
+
+        <Card className="p-5">
+          <div className="text-sm text-slate-500">Wallet Balance</div>
+          <div className="text-2xl font-semibold">₹{data?.wallet_balance ?? "--"}</div>
+        </Card>
+
+        <Card className="p-5">
+          <div className="text-sm text-slate-500">Credits</div>
+          <div className="text-2xl font-semibold">₹{data?.transactions.credits ?? "--"}</div>
+        </Card>
+
+        <Card className="p-5">
+          <div className="text-sm text-slate-500">Debits</div>
+          <div className="text-2xl font-semibold">₹{data?.transactions.debits ?? "--"}</div>
+        </Card>
+
+      </div>
+
+      {/* DATA VISUALIZATION */}
+      <Card className="p-6">
+
+        <div className="font-semibold mb-4">
+          Task Status Visualization
+        </div>
+
+        <ResponsiveContainer width="100%" height={300}>
+          <BarChart data={chartData}>
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Tooltip />
+            <Bar dataKey="value" />
+          </BarChart>
+        </ResponsiveContainer>
+
+      </Card>
+
+    </Layout>
   );
 }
