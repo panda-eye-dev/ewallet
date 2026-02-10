@@ -5,10 +5,11 @@ import Input from "../components/Input";
 import Button from "../components/Button";
 import { useAuth } from "../auth/AuthContext";
 import { getWallet, topUp } from "../api/wallet";
+import client from "../api/client"; // ✅ use axios client
 
 export default function Wallet() {
 
-  const { user, token } = useAuth();
+  const { user } = useAuth();
 
   const [balance, setBalance] = useState(null);
   const [converted, setConverted] = useState(null);
@@ -18,58 +19,63 @@ export default function Wallet() {
   const [msg, setMsg] = useState("");
   const [err, setErr] = useState("");
 
-  // Load wallet balance
-  async function load() {
-    const w = await getWallet();
-    setBalance(w.balance);
+  // ✅ Load wallet balance
+  async function loadWallet() {
+    try {
+      const w = await getWallet();
+      setBalance(w.balance);
+    } catch (e) {
+      console.error("Failed loading wallet", e);
+    }
   }
 
-  // Load currency conversion
+  // ✅ Load currency conversion (NO direct fetch)
   async function loadConversion(selectedCurrency = currency) {
     try {
-      const res = await fetch(
-        `http://localhost:8000/wallet/convert?currency=${selectedCurrency}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+      const res = await client.get(
+        `/wallet/convert?currency=${selectedCurrency}`
       );
 
-      const data = await res.json();
-
-      setConverted(data.converted_balance);
+      setConverted(res.data.converted_balance);
 
     } catch (e) {
       console.error("Conversion failed", e);
     }
   }
 
+  // Initial load
   useEffect(() => {
-    load();
+    loadWallet();
     loadConversion();
   }, []);
 
+  // ✅ Top-up handler
   async function onTopup() {
+
     setMsg("");
     setErr("");
 
     try {
+
       const data = await topUp(Number(amount));
 
       setMsg(data.message);
       setBalance(data.balance);
 
-      // reload conversion after top-up
+      // refresh conversion after topup
       loadConversion();
 
     } catch (e) {
+
       setErr(e?.response?.data?.detail || "Top-up failed");
+
     }
   }
 
   return (
+
     <Layout>
+
       <div className="grid md:grid-cols-2 gap-4">
 
         {/* Balance Card */}
@@ -85,8 +91,9 @@ export default function Wallet() {
           <select
             value={currency}
             onChange={(e) => {
-              setCurrency(e.target.value);
-              loadConversion(e.target.value);
+              const newCurrency = e.target.value;
+              setCurrency(newCurrency);
+              loadConversion(newCurrency);
             }}
             className="mt-4 border border-slate-300 rounded-lg px-3 py-2"
           >
@@ -139,6 +146,8 @@ export default function Wallet() {
         </Card>
 
       </div>
+
     </Layout>
+
   );
 }
