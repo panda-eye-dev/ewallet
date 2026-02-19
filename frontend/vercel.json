@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "http://34.237.51.80:8000/:path*"
+      "destination": "https://your-backend.onrender.com/:path*"
     }
   ]
 }

@@ -19,14 +19,11 @@ export default function Dashboard() {
 
   async function loadDashboard() {
 
-    const res = await fetch(
-      "https://ewallet-1-wrou.onrender.com/dashboard/summary",
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    const res = await fetch("/api/dashboard/summary", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 
     const json = await res.json();
 
@@ -34,8 +31,11 @@ export default function Dashboard() {
   }
 
   useEffect(() => {
+  if (token) {
     loadDashboard();
-  }, []);
+  }
+}, [token]);
+
 
   // TASK visualization data
   const taskChart = data

@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const client = axios.create({
-  baseURL: "https://ewallet-1-wrou.onrender.com/",
+  baseURL: "/api",
 });
 
 client.interceptors.request.use((config) => {
