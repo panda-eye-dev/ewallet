@@ -1,11 +1,7 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, APIRouter
 from app.api import auth, tasks, wallet, transactions, dashboard
 from fastapi.middleware.cors import CORSMiddleware
 app = FastAPI()
-
-@app.get("/health")
-def health():
-    return {"status": "ok"}
 
 app.add_middleware(
     CORSMiddleware,
@@ -15,9 +11,16 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+api = APIRouter()
+
+@api.get("/health")
+def health():
+    return {"status": "ok"}
+
 
 app.include_router(auth.router)
 app.include_router(tasks.router)
 app.include_router(wallet.router)
 app.include_router(transactions.router)
 app.include_router(dashboard.router)
+app.include_router(api)
