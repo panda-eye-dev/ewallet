@@ -2,13 +2,13 @@
 
 ## Overview
 
-EarnIt is a full-stack task and wallet management application designed for parent-child task tracking.
+EarnIt is a full-stack web application where parents assign tasks to their kid/s and pays them after they completes the tasks.
 
 Parents can:
 
 - Create and manage tasks
 - Approve completed tasks
-- Manage wallet balance
+- Manage wallet balance 
 
 Children can:
 
@@ -34,7 +34,8 @@ This backend provides REST APIs supporting:
 - Alembic (migrations)
 - JWT Authentication
 - External Currency API
-- AWS EC2 Deployment
+- Vercel - Frontend deployment
+- Render - Backend deployment
 
 ---
 
@@ -90,12 +91,7 @@ DATABASE_URL=
 SECRET_KEY=
 ALGORITHM=HS256
 ACCESS_TOKEN_EXPIRE_MINUTES=30
-
-ONESIGNAL_APP_ID=
-ONESIGNAL_API_KEY=
-
 CURRENCY_API=
-
 
 ---
 
@@ -105,7 +101,6 @@ Clone repository:
 
 git clone <repo>
 cd backend
-
 
 Create virtual environment:
 
@@ -139,9 +134,8 @@ http://localhost:8000/docs
 
 Backend deployed on:
 
-- AWS EC2
-- HTTPS exposed using Cloudflare Tunnel
-
+- Render
+- 
 ---
 
 ## How to Test
@@ -151,6 +145,7 @@ Backend deployed on:
 1. Register user
 2. Login
 3. Use JWT token for requests
+4. Register Child account
 
 ---
 
@@ -184,11 +179,7 @@ Returns converted wallet balance.
 
 ## Notes
 
-- CORS enabled for frontend deployment.
 - JWT authentication required for protected routes.
-
-
-
 
 
 
